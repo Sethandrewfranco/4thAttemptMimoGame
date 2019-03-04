@@ -16,15 +16,15 @@ public class PlayerController : MonoBehaviour
         var transform = GetComponent<Transform>();
         if (Input.GetKey("right"))
         {
-            rigidBody.velocity = new Vector2(5, rigidBody.velocity.y);
+            rigidBody.velocity = new Vector2(5, 0);
         }
         if (Input.GetKey("left"))
         {
-            rigidBody.velocity = new Vector2(-5, rigidBody.velocity.y);
+            rigidBody.velocity = new Vector2(-5, 0);
         }
         if (Input.GetKeyDown("space"))
         {
-            rigidBody.velocity = new Vector2(rigidBody.velocity.x, 10);
+            rigidBody.velocity = new Vector2(0, 10);
         }
         if (transform.position.y < -6)
         {
@@ -36,6 +36,14 @@ public class PlayerController : MonoBehaviour
             {
                 transform.position = new Vector2(2, 2);
             }
+        }
+    }
+
+    public void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.name == "EnemyDamage")
+        {
+            transform.position = new Vector2(2, 2);
         }
     }
 }
