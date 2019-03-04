@@ -5,27 +5,57 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
+    public SpriteRenderer sprite;
+    public LayerMask groundLayer;
+    public Transform groundCheck;
+    public float groundCheckRadius;
+    private bool groundCollision;
+    private bool doubleJumped;
+    public CanvasGroup canvasYouWin;
+
     void Start()
     {
 
+    }
+
+    void FixedUpdate()
+    {
+        groundCollision = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
     }
 
     void Update()
     {
         var rigidBody = GetComponent<Rigidbody2D>();
         var transform = GetComponent<Transform>();
+
         if (Input.GetKey("right"))
         {
-            rigidBody.velocity = new Vector2(5, 0);
+            sprite.flipX = false;
+            rigidBody.velocity = new Vector2(5, rigidBody.velocity.y);
         }
+
         if (Input.GetKey("left"))
         {
-            rigidBody.velocity = new Vector2(-5, 0);
+            sprite.flipX = true;
+            rigidBody.velocity = new Vector2(-5, rigidBody.velocity.y);
         }
-        if (Input.GetKeyDown("space"))
+
+        if (groundCollision)
         {
-            rigidBody.velocity = new Vector2(0, 10);
+            doubleJumped = false;
         }
+
+        if (Input.GetKeyDown("space") && groundCollision)
+        {
+            rigidBody.velocity = new Vector2(rigidBody.velocity.x, 10);
+        }
+
+        if (Input.GetKeyDown("space") && !groundCollision && !doubleJumped)
+        {
+            rigidBody.velocity = new Vector2(rigidBody.velocity.x, 10);
+            doubleJumped = true;
+        }
+
         if (transform.position.y < -6)
         {
             if (transform.position.x < 2)
@@ -43,7 +73,11 @@ public class PlayerController : MonoBehaviour
     {
         if (other.name == "EnemyDamage")
         {
-            transform.position = new Vector2(2, 2);
+            transform.position = new Vector2(2, 1);
+        }
+        else if (other.name == "Exit")
+        {
+            canvasYouWin.alpha = 1;
         }
     }
 }
